@@ -1,21 +1,49 @@
 Social Network Program
+
+
 Introduction
+
+
 This project is a simple Social Network Program created using Maven and developed in IntelliJ IDEA. It demonstrates the implementation of key functionalities required for a social networking platform, including entity management, services, and test cases.
 
+
 Project Structure
+
+
 The following is the folder and file structure of the project:
 
+
+
 .idea/                     # IntelliJ project files
+
+
 src/main/java/org/example  # Main source code directory
+
+
   ├── entity/              # Contains entity classes
+
+  
   ├── services/            # Contains service logic
+
+  
   ├── testcases/           # Unit test cases
+
+  
   ├── Main.java            # Entry point of the application
+
+  
 .gitignore                 # Git ignore rules
+
+
 CME_proj_flowchart.pdf     # Flowchart for the project
+
+
 README.md                  # Project documentation (this file)
 
+
 Setup and Usage
+
+
 Prerequisites
 Java Development Kit (JDK): Version 8 or higher
 Maven: Installed and configured
