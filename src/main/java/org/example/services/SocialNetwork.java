@@ -1,17 +1,29 @@
 package org.example.services;
 import org.example.entity.Session;
 import org.example.entity.User;
+import lombok.Data;
+
 
 import java.util.*;
 
+/*
+ * Represents a social network service with user management and session handling.
+ */
+
+@Data
 public class SocialNetwork {
+
     private Map<String, User> usersById;
     private Map<String, User> usersByUsername;
     private Map<Integer, List<User>> usersByAge;
     private Map<String, List<User>> usersByHobby;
     private Session session;
 
+    DummyDatabase obj = new DummyDatabase();
 
+    /**
+     * Initializes the social network with empty user data and a session.
+     */
     public SocialNetwork() {
         usersById = new HashMap<>();
         usersByUsername = new HashMap<>();
@@ -20,68 +32,44 @@ public class SocialNetwork {
         session = new Session();
     }
 
-    public Map<String, User> getUsersById() {
-        return usersById;
-    }
+    // Getters and Setters
+    //implemented with lombok.
 
-    public void setUsersById(Map<String, User> usersById) {
-        this.usersById = usersById;
-    }
 
-    public Map<String, User> getUsersByUsername() {
-        return usersByUsername;
-    }
 
-    public void setUsersByUsername(Map<String, User> usersByUsername) {
-        this.usersByUsername = usersByUsername;
-    }
-
-    public Map<Integer, List<User>> getUsersByAge() {
-        return usersByAge;
-    }
-
-    public void setUsersByAge(Map<Integer, List<User>> usersByAge) {
-        this.usersByAge = usersByAge;
-    }
-
-    public Map<String, List<User>> getUsersByHobby() {
-        return usersByHobby;
-    }
-
-    public void setUsersByHobby(Map<String, List<User>> usersByHobby) {
-        this.usersByHobby = usersByHobby;
-    }
-
-    public Session getSession() {
-        return session;
-    }
-
-    public void setSession(Session session) {
-        this.session = session;
-    }
-
-    // Register a new user
-
+    /*
+     * Registers a new user.
+     */
     public void registerUser(String username, String password, String role) {
         if (session.isLoggedIn()) {
             System.out.println("Please log out to register a new user.");
             return;
         }
-
-//        if (usersByUsername.containsKey(username)) {
-//            System.out.println("Username taken. Please choose a different username.");
-//            return;
-//        }
-
-
-
         User user = new User(username, password, role);
         usersById.put(user.getId(), user);
         usersByUsername.put(username, user);
         System.out.println("User registered with ID: " + user.getId());
+        obj.storeData(user);
+
+
     }
 
-    // Login user
+    /**
+     * Overloaded method to register a user object.
+     */
+    public void registerUser(User u) {
+        if (session.isLoggedIn()) {
+            System.out.println("Please log out to register a new user.");
+            return;
+        }
+        usersById.put(u.getId(), u);
+        usersByUsername.put(u.getUsername(), u);
+        System.out.println("User registered with ID: " + u.getId());
+    }
+
+    /**
+     * Logs in a user with their username and password.
+     */
     public void login(String username, String password) {
         User user = usersByUsername.get(username);
         if (user != null && user.getPassword().equals(password)) {
@@ -92,7 +80,9 @@ public class SocialNetwork {
         }
     }
 
-    // Logout user
+    /**
+     * Logs out the current user.
+     */
     public void logout() {
         if (session.isLoggedIn()) {
             System.out.println("Goodbye, " + session.getUserName());
@@ -102,22 +92,26 @@ public class SocialNetwork {
         }
     }
 
-    // Delete user (admin only)
+    /**
+     * Deletes a user (admin only).
+     */
     public void deleteUser(String userId) {
-        if (!session.isLoggedIn() || !session.getRole().equals("admin")) {
+        if (!session.isLoggedIn() || !"admin".equals(session.getRole())) {
             System.out.println("Only admins can delete users.");
             return;
         }
-        if (usersById.containsKey(userId)) {
-            User user = usersById.remove(userId);
+        User user = usersById.remove(userId);
+        if (user != null) {
             usersByUsername.remove(user.getUsername());
-            System.out.println("User deleted successfully.");
+            System.out.println("User deleted sucessfully.");
         } else {
             System.out.println("User ID not found.");
         }
     }
 
-    // Search by name
+    /**
+     * Searches for users by name.
+     */
     public void searchUserByName(String name) {
         if (!session.isLoggedIn()) {
             System.out.println("Please log in to perform search operations.");
@@ -127,14 +121,13 @@ public class SocialNetwork {
         for (User user : usersByUsername.values()) {
             if (user.getUsername().equalsIgnoreCase(name)) {
                 System.out.println("ID: " + user.getId() + ", Role: " + user.getRole());
-                System.out.println("Want to add this as your frand?");
-
-
             }
         }
     }
 
-    // Search by age
+    /**
+     * Searches for users by age.
+     */
     public void searchUserByAge(int age) {
         if (!session.isLoggedIn()) {
             System.out.println("Please log in to perform search operations.");
@@ -148,8 +141,9 @@ public class SocialNetwork {
         }
     }
 
-
-    // Search by hobbies
+    /**
+     * Searches for users by hobbies.
+     */
     public void searchUserByHobbies(Set<String> hobbies) {
         if (!session.isLoggedIn()) {
             System.out.println("Please log in to perform search operations.");
@@ -163,8 +157,9 @@ public class SocialNetwork {
         }
     }
 
-
-    // Get friends of a user by ID
+    /**
+     * Retrieves friends of a user by their ID.
+     */
     public void getFriendsOfUser(String userId) {
         if (!session.isLoggedIn()) {
             System.out.println("Please log in to view friends.");
@@ -177,5 +172,5 @@ public class SocialNetwork {
             System.out.println("User ID not found.");
         }
     }
-
 }
+

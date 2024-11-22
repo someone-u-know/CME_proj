@@ -1,17 +1,27 @@
 package org.example.entity;
+import lombok.Data;
 
-
+/**
+ * Represents a session with login and logout functionality.
+ */
+@Data
 public class Session {
+
     private boolean loggedIn;
     private String userId;
     private String userName;
     private String role;
 
+    /**
+     * Constructs a session, defaulting to a logged-out state.
+     */
     public Session() {
         this.loggedIn = false;
     }
 
-
+    /**
+     * Logs in a user by setting their session details.
+     */
     public void login(String userId, String userName, String role) {
         this.loggedIn = true;
         this.userId = userId;
@@ -19,6 +29,9 @@ public class Session {
         this.role = role;
     }
 
+    /**
+     * Logs out the user and clears session details.
+     */
     public void logout() {
         this.loggedIn = false;
         this.userId = null;
@@ -26,36 +39,11 @@ public class Session {
         this.role = null;
     }
 
+    /**
+     * Checks if the user is logged in.
+     */
     public boolean isLoggedIn() {
         return loggedIn;
     }
-
-    public void setLoggedIn(boolean loggedIn) {
-        this.loggedIn = loggedIn;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
 }
+
