@@ -254,6 +254,7 @@ package org.example;
 import java.util.*;
 import lombok.*;
 
+import org.example.entity.Session;
 import org.example.entity.User;
 import org.example.services.DummyDatabase;
 import org.example.services.SocialNetwork;
@@ -262,6 +263,8 @@ import org.example.services.SocialNetwork;
  * This is the Main class to demonstrate the Social Network application.
  * It provides functionality for both Admin and User roles,
  * including login, registration, and various operations.
+ * What I have done here is break the whole flow into functions.
+ * So the chaos of switch case inside switch case is formatted effeciently.
  */
 public class Main {
     public static void main(String[] args) {
@@ -269,7 +272,7 @@ public class Main {
         SocialNetwork network = new SocialNetwork();
         DummyDatabase db = new DummyDatabase();
 
-        // Initialize the database and populate the network
+        // Initialize the database
         db.createDB(network);
 
         boolean exit = false;
@@ -328,6 +331,7 @@ public class Main {
                 switch (adminChoice) {
                     case 1:
                         // View full user list
+                        //acccesses the network using getUsersbyId because ID is the only unique parameter
                         System.out.println("Displaying all list users:");
                         for (User user : network.getUsersById().values()) {
                             System.out.println("Id:" + user.getId() + "name:" + user.getUsername() + "Age" + user.getAge());
@@ -376,7 +380,8 @@ public class Main {
     private static void handleUserFlow(Scanner sc, SocialNetwork network) {
         System.out.println("Enter as: 1. Registered User 2. New User");
         int userChoice = sc.nextInt();
-        sc.nextLine(); // Clear input buffer
+        sc.nextLine();
+        // Clear input buffer
 
         switch (userChoice) {
 
@@ -423,12 +428,15 @@ public class Main {
             System.out.println("User Name: " + network.getSession().getUserName());
             System.out.println("\nUser Options:\n1. View Profile\n2. Search Users\n3. Add Friends\n4. Update Details\n5. Logout");
             int userAction = sc.nextInt();
-            sc.nextLine(); // Clear input buffer
+            sc.nextLine();
 
             switch (userAction) {
                 case 1:
                     // View user profile
-                    User user = network.getUsersByUsername().get(network.getSession().getUserName());
+
+                    Session cs = network.getSession();
+                    String uid = cs.getUserId();
+                    User user = network.getUsersById().get(uid);
                     System.out.println("Profile:");
                     System.out.println("Name: " + user.getUsername());
                     System.out.println("Age: " + user.getAge());

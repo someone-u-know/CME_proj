@@ -5,9 +5,13 @@ import lombok.NoArgsConstructor;
 
 import java.util.*;
 
-/**
+/*
  * Represents a User entity with attributes and basic functionalities.
  * The class provides functionality to manage user data and relationships (like friends).
+ */
+
+/*Lombok is a Java library that helps reduce boilerplate code in Java projects.
+ It provides shortcuts that automatically generate commonly used code patterns, such as getters, setters, constructors......
  */
 @Data
 @NoArgsConstructor
@@ -20,7 +24,7 @@ public class User {
     private String id;
     private Set<String> friends;
 
-    /**
+    /*
      * Constructs a User with the specified username, password, and role.
      */
     public User(String username, String password, String role) {
@@ -33,7 +37,7 @@ public class User {
     }
 
 
-    /**
+    /*
      * Adds a friend's ID to the user's friends list, ensuring the user doesn't add themselves.
      */
     public void addFriend(String friendId) {

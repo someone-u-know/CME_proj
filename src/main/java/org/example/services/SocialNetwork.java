@@ -1,27 +1,27 @@
+
 package org.example.services;
+
 import org.example.entity.Session;
 import org.example.entity.User;
 import lombok.Data;
-
-
 import java.util.*;
 
 /*
- * Represents a social network service with user management and session handling.
+ * Represents a social network service with user management and all functions that are being performed on the social network  and session handling.
  */
 
 @Data
 public class SocialNetwork {
-
+    //reduces time complexity
+    private Map<String, List<User>> usersByUsername;
     private Map<String, User> usersById;
-    private Map<String, User> usersByUsername;
     private Map<Integer, List<User>> usersByAge;
     private Map<String, List<User>> usersByHobby;
     private Session session;
 
     DummyDatabase obj = new DummyDatabase();
 
-    /**
+    /*
      * Initializes the social network with empty user data and a session.
      */
     public SocialNetwork() {
@@ -33,54 +33,58 @@ public class SocialNetwork {
     }
 
     // Getters and Setters
-    //implemented with lombok.
-
-
-
+    // Implemented with Lombok.
     /*
      * Registers a new user.
      */
     public void registerUser(String username, String password, String role) {
-        if (session.isLoggedIn()) {
+        if (session.isLoggedIn() && session.getRole().equals("user")) {  //this was creating a bug earlier
             System.out.println("Please log out to register a new user.");
             return;
         }
         User user = new User(username, password, role);
+
+        // Add user to usersById and usersByUsername
         usersById.put(user.getId(), user);
-        usersByUsername.put(username, user);
+        usersByUsername.computeIfAbsent(username, k -> new ArrayList<>()).add(user);
+
         System.out.println("User registered with ID: " + user.getId());
-        obj.storeData(user);
-
-
+//        obj.storeData(user);
     }
 
-    /**
+    /*
      * Overloaded method to register a user object.
      */
-    public void registerUser(User u) {
-        if (session.isLoggedIn()) {
+    public void registerUser(User u){
+        if (session.isLoggedIn() && session.getRole().equals("user")) {
             System.out.println("Please log out to register a new user.");
             return;
         }
+        // Add user to usersById and usersByUsername
         usersById.put(u.getId(), u);
-        usersByUsername.put(u.getUsername(), u);
+        usersByUsername.computeIfAbsent(u.getUsername(), k -> new ArrayList<>()).add(u);
         System.out.println("User registered with ID: " + u.getId());
+
     }
 
-    /**
+    /*
      * Logs in a user with their username and password.
      */
-    public void login(String username, String password) {
-        User user = usersByUsername.get(username);
-        if (user != null && user.getPassword().equals(password)) {
-            session.login(user.getId(), user.getUsername(), user.getRole());
-            System.out.println("Login successful. Welcome, " + user.getUsername());
-        } else {
-            System.out.println("Invalid username or password.");
+    public void login(String username, String pw) {
+        List<User> users = usersByUsername.get(username);
+        if (users != null) {
+            for (User user : users) {
+                if (user.getPassword().equals(pw)){
+                    session.login(user.getId(), user.getUsername(), user.getRole());
+                    System.out.println("Login successful. Welcome, " + user.getUsername());
+                    return;
+                }
+            }
         }
+        System.out.println("Invalid username or password.");
     }
 
-    /**
+    /*
      * Logs out the current user.
      */
     public void logout() {
@@ -92,7 +96,7 @@ public class SocialNetwork {
         }
     }
 
-    /**
+    /*
      * Deletes a user (admin only).
      */
     public void deleteUser(String userId) {
@@ -102,14 +106,14 @@ public class SocialNetwork {
         }
         User user = usersById.remove(userId);
         if (user != null) {
-            usersByUsername.remove(user.getUsername());
-            System.out.println("User deleted sucessfully.");
+            usersByUsername.get(user.getUsername()).remove(user);
+            System.out.println("User deleted successfully.");
         } else {
             System.out.println("User ID not found.");
         }
     }
 
-    /**
+    /*
      * Searches for users by name.
      */
     public void searchUserByName(String name) {
@@ -117,15 +121,19 @@ public class SocialNetwork {
             System.out.println("Please log in to perform search operations.");
             return;
         }
-        System.out.println("Users with name '" + name + "':");
-        for (User user : usersByUsername.values()) {
-            if (user.getUsername().equalsIgnoreCase(name)) {
+
+        List<User> users = usersByUsername.get(name);
+        if (users != null) {
+            System.out.println("Users with name '" + name + "':");
+            for (User user : users) {
                 System.out.println("ID: " + user.getId() + ", Role: " + user.getRole());
             }
+        } else {
+            System.out.println("No users found with the name '" + name + "'.");
         }
     }
 
-    /**
+    /*
      * Searches for users by age.
      */
     public void searchUserByAge(int age) {
@@ -133,6 +141,7 @@ public class SocialNetwork {
             System.out.println("Please log in to perform search operations.");
             return;
         }
+
         System.out.println("Users with age " + age + ":");
         for (User user : usersById.values()) {
             if (user.getAge() != null && user.getAge() == age) {
@@ -141,7 +150,7 @@ public class SocialNetwork {
         }
     }
 
-    /**
+    /*
      * Searches for users by hobbies.
      */
     public void searchUserByHobbies(Set<String> hobbies) {
@@ -149,6 +158,7 @@ public class SocialNetwork {
             System.out.println("Please log in to perform search operations.");
             return;
         }
+
         System.out.println("Users with hobbies " + hobbies + ":");
         for (User user : usersById.values()) {
             if (user.getHobbies() != null && user.getHobbies().containsAll(hobbies)) {
@@ -157,7 +167,7 @@ public class SocialNetwork {
         }
     }
 
-    /**
+    /*
      * Retrieves friends of a user by their ID.
      */
     public void getFriendsOfUser(String userId) {
@@ -173,4 +183,3 @@ public class SocialNetwork {
         }
     }
 }
-
