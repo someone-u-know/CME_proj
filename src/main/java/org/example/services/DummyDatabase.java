@@ -1,19 +1,14 @@
 package org.example.services;
-
-import com.opencsv.CSVWriter;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 import org.example.entity.User;
-
 import java.io.*;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class DummyDatabase {
     private static final String CSV_FILE = "/newcsv.csv"; // Relative to src/main/resources
 
-    // Load users from CSV and register them to the SocialNetwork
+    // Load users
     public void createDB(SocialNetwork network) {
         List<User> users = loadUsersFromCSV();
         for (User user : users) {
@@ -31,12 +26,12 @@ public class DummyDatabase {
             }
             Reader reader = new InputStreamReader(inputStream);
 
-            CsvToBean<User> csvToBean = new CsvToBeanBuilder<User>(reader)
-                    .withType(User.class)
-                    .withIgnoreLeadingWhiteSpace(true)
+            CsvToBean<User> ctb = new CsvToBeanBuilder<User>(reader)
+                    .withType(User.class)  // Maps each CSV row to a `User` object.
+                    .withIgnoreLeadingWhiteSpace(true) // Trims leading whitespace in CSV fields.
                     .build();
 
-            return csvToBean.parse();
+            return ctb.parse();
         } catch (Exception e) {
             System.err.println("Error reading CSV file: " + e.getMessage());
         }
